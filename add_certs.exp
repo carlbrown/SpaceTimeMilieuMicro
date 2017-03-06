@@ -13,12 +13,12 @@ set timeout 30
 match_max 100000
 spawn /usr/sbin/dpkg-reconfigure ca-certificates
 expect "ca-certificates configuration"
-send -- "	"
-expect -exact "\[37m\[45myes  \[23;38H\[41m<Ok>\[23;39H"
+send -- "\t"
+expect "<Ok>"
 send -- "\r"
 expect "<Ok>"
-send -- "	"
-expect -exact "\[12;4H\[37m\[45m*\[28;38H\[41m<Ok>\[28;39H"
+send -- "\t"
+expect "<Ok>"
 send -- "\r"
 expect "done."
 sleep 1
