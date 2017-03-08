@@ -21,16 +21,34 @@ let myCertPath = "./cert.pem"
 let myKeyPath = "./key.pem"
 let myChainPath = "./chain.pem"
 
+let remoteURLList: [URL]
+let rawURLList = getenv("URLS")
+if let urlList = rawURLList, let urlListString = String(utf8String: urlList) {
+    var tmpURLList = [URL]()
+    let urlStringList = NSString(string: urlListString).components(separatedBy:CharacterSet.whitespaces)
+    for urlString in urlStringList {
+        if let url = URL(string:urlString) {
+            tmpURLList.append(url)
+        }
+    }
+    if (tmpURLList.count <= 0) {
+        fatalError("Failed to create URL list from URLS environment variable (which should be whitespace delimited)")
+    }
+    remoteURLList = tmpURLList
+} else {
 //no SSL for mac
 #if os(Linux)
-guard let remoteURLList = [URL(string: "https://ssldemo.linuxswift.com:8091/api")] as? [URL] else {
-    fatalError("Failed to create URL list from hardcoded strings")
-}
+    guard let tmpRemoteURLList = [URL(string: "https://ssldemo.linuxswift.com:8091/api")] as? [URL] else {
+        fatalError("Failed to create URL list from hardcoded strings")
+    }
+    remoteURLList = tmpRemoteURLList
 #else
-guard let remoteURLList = [URL(string: "http://127.0.0.1:8091/api")] as? [URL] else {
-    fatalError("Failed to create URL list from hardcoded strings")
-}
+    guard let tmpRemoteURLList = [URL(string: "http://127.0.0.1:8091/api")] as? [URL] else {
+        fatalError("Failed to create URL list from hardcoded strings")
+    }
+    remoteURLList = tmpRemoteURLList
 #endif
+}
 
 //Enable Core Dumps on Linux
 #if os(Linux)
