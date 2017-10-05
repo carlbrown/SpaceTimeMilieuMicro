@@ -3,5 +3,6 @@
 /Packages
 /*.xcodeproj
 /.vagrant
+/.vscode
 /Package.pins
 /ubuntu-yakkety-16.10-cloudimg-console.log
