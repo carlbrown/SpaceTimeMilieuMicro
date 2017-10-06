@@ -20,6 +20,7 @@ Log.logger = ourLogger
 let myCertPath = "./cert.pem"
 let myKeyPath = "./key.pem"
 let myChainPath = "./chain.pem"
+let myPasswordProtectedChainFilePath = "./osx_chain.pfx"
 
 let remoteURLList: [URL]
 let rawURLList = getenv("URLS")
@@ -70,7 +71,9 @@ corelimit.deallocate(capacity: 1)
 
 //Don't do SSL on macOS
 #if os(Linux)
-let mySSLConfig =  SSLConfig(withCACertificateFilePath: myChainPath, usingCertificateFile: myCertPath, withKeyFile: myKeyPath, usingSelfSignedCerts: false)
+    let mySSLConfig =  SSLConfig(withCACertificateFilePath: myChainPath, usingCertificateFile: myCertPath, withKeyFile: myKeyPath, usingSelfSignedCerts: false)
+#else
+let mySSLConfig =  SSLConfig(withChainFilePath: myPasswordProtectedChainFilePath, withPassword:"password", usingSelfSignedCerts: false)
 #endif
 
 let APIKey: String
@@ -227,10 +230,5 @@ router.get("/ping") { request, response, next in
     try response.send("OK").end()
 }
 
-//Don't do SSL on macOS
-#if os(Linux)
-    Kitura.addHTTPServer(onPort: 8090, with: router, withSSL: mySSLConfig)
-#else
-    Kitura.addHTTPServer(onPort: 8090, with: router)
-#endif
+Kitura.addHTTPServer(onPort: 8090, with: router, withSSL: mySSLConfig)
 Kitura.run()
